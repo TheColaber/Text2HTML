@@ -1,12 +1,8 @@
 Element.prototype.insertHTML = function (text) {
   function analyzeElement(placement, modtext) {
     let i = 0;
-    while (modtext.charCodeAt(i) == 32 || modtext.charCodeAt(i) == 10) {
-      i++
-    }
-    if (i == modtext.length) {
-      return;
-    }
+    while (modtext.charCodeAt(i) == 32 || modtext.charCodeAt(i) == 10) { i++ }
+    if (i == modtext.length) return;
     if (modtext.charAt(i) == "<") { // This is an element/comment
       if (modtext.substring(i, i+4) == "<!--") { // Element is comment?
         i += 4
@@ -18,7 +14,7 @@ Element.prototype.insertHTML = function (text) {
         var comment = document.createComment(commentMessage);
         placement.appendChild(comment);
         analyzeElement(placement, modtext.substring(i + 3, modtext.length)) // Let's analyze our siblings
-        return ;
+        return;
       }
       let tagName = "";
       i++
@@ -26,14 +22,15 @@ Element.prototype.insertHTML = function (text) {
         tagName += modtext.charAt(i)
         i++
       }
+      if (tagName.includes("/")) {
+        console.log(text);
+        throw `Error in creating element "${tagName}" in\n"${modtext.substring(i-20, i+20)}"`
+        return;
+      }
       let element = placement.appendChild(document.createElement(tagName)) // Create an element to append
-      let selfclosing = false
+      let selfclosing = 0 + !element.outerHTML.includes("</") + element.outerHTML.includes("/>")
       while (modtext.charAt(i) != ">") { // Repeat till end of starting tag
         i++;
-        if (modtext.charAt(i) == "/") {
-          selfclosing = true
-          break;
-        }
         let attributeName = ""
         while (modtext.charAt(i) != "=") { // Find attribute name
           attributeName += modtext.charAt(i)
@@ -50,44 +47,34 @@ Element.prototype.insertHTML = function (text) {
         element.setAttribute(attributeName, attributeValue) // Set these atrributes to the element appended
         i++
       }
-      let j = i + 2
+      let j = i + selfclosing;
       if (!selfclosing) {
-        j-= 2
+        j = i
         let duplicates = 0;
         while (j < modtext.length) {
-          if (modtext.substring(j, j + `<${tagName}>`.length) == `<${tagName}>`) { // Another Element like the one we are refuring to? Keep Track then
-            duplicates++
-          }
+          if (modtext.substring(j, j + `<${tagName}`.length) == `<${tagName}`) duplicates++
           if (modtext.substring(j, j + `</${tagName}>`.length) == `</${tagName}>`) { // Found Ends of duplicates? We can reduse the variable
             duplicates--
-            if (duplicates == -1) { // Have we found our element's end? Then break out
-              break;
-            }
+            if (duplicates == -1) break;
           }
           j++
         }
         analyzeElement(element, modtext.substring(i+1, j)) // Let's analyze our inner
         analyzeElement(element.parentElement, modtext.substring(j + `</${tagName}>`.length, modtext.length)) // Let's analyze our siblings
-      } else {
-        analyzeElement(element.parentElement, modtext.substring(j, modtext.length)) // Let's analyze our siblings
-      }
+      } else analyzeElement(element.parentElement, modtext.substring(j, modtext.length)) // Let's analyze our siblings
     }
     else { // This is a text node
       let j = i;
       let innerText = "";
       while (!(modtext.charCodeAt(j) == 10 || j == modtext.length)) {
-        if (modtext.charAt(j) == "<" && modtext.substring(j, modtext.length).match(/<.*>/g).length) {
-          break;
-        }
+        if (modtext.charAt(j) == "<" && modtext.substring(j, modtext.length).match(/<.*>/g).length) break;
         innerText += modtext.charAt(j);
         j++;
       }
       if (placement.childNodes.length) { // Does our parent have any nodes already? If so let's create a text node
         let textnode = document.createTextNode(innerText)
         placement.append(textnode)
-      } else { // If not we can just use innerText
-        placement.innerText = innerText;
-      }
+      } else placement.innerText = innerText;
       analyzeElement(placement, modtext.substring(j, modtext.length))
     }
   }
