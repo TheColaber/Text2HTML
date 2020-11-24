@@ -16,21 +16,25 @@ Element.prototype.insertHTML = function (text) {
         analyzeElement(placement, modtext.substring(i + 3, modtext.length)) // Let's analyze our siblings
         return;
       }
+      let selfclosing = 0
       let tagName = "";
       i++
-      while (!(modtext.charAt(i) == ">" || modtext.charAt(i) == " ")) { // Find tag name
+      while (!(modtext.charAt(i) == ">" || modtext.charAt(i) == " " || modtext.substring(i, i+2) == "/>")) { // Find tag name
         tagName += modtext.charAt(i)
         i++
       }
-      if (tagName.includes("/")) {
-        console.log(text);
-        throw `Error in creating element "${tagName}" in\n"${modtext.substring(i-20, i+20)}"`
-        return;
+      try {
+        let element = placement.appendChild(document.createElement(tagName)) // Create an element to append
+      } catch (e) {
+        throw `Error in creating element "${tagName}"`
       }
-      let element = placement.appendChild(document.createElement(tagName)) // Create an element to append
-      let selfclosing = 0 + !element.outerHTML.includes("</") + element.outerHTML.includes("/>")
+      selfclosing+= !element.outerHTML.includes("</");
       while (modtext.charAt(i) != ">") { // Repeat till end of starting tag
-        i++;
+        while (modtext.charAt(i) == " ") { i++ }
+        if (modtext.substring(i, i+2) == "/>") {
+          selfclosing++
+          break;
+        }
         let attributeName = ""
         while (modtext.charAt(i) != "=") { // Find attribute name
           attributeName += modtext.charAt(i)
@@ -79,4 +83,5 @@ Element.prototype.insertHTML = function (text) {
     }
   }
   analyzeElement(this, text)
+  return this;
 }
