@@ -6,7 +6,7 @@ Takes text and inserts it to the page as html. Useful when not wanting to use DO
 
 #### Syntax:
 ```js
-Element.insertHTML(String)
+Element.insertHTML(text String)
 ```
 
 #### Example:
