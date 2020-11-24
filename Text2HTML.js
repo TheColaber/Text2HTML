@@ -32,12 +32,13 @@ Element.prototype.insertHTML = function (text) {
         let attributeName = "";
         for (; modtext.charAt(i) != "="; i++) attributeName += modtext.charAt(i);
         i++;
-        let quoteType = modtext.charAt(i);
-        i++;
+        let quoteType = modtext.charAt(i) == "'" || modtext.charAt(i) == '"' ? modtext.charAt(i) : false;
+        i+= quoteType == "'" || quoteType == '"';
         let attributeValue = "";
-        for (; modtext.charAt(i) != quoteType; i++) attributeValue += modtext.charAt(i);
-        element.setAttribute(attributeName, attributeValue);
-        i++;
+        for (; quoteType == "'" || quoteType == '"' ? modtext.charAt(i) != quoteType : !(modtext.charAt(i) == " " || modtext.charAt(i) == ">"); i++) attributeValue += modtext.charAt(i);
+        try { element.setAttribute(attributeName, attributeValue) }
+        catch (e) { throw `Error: Failed to set the attribute "${attributeName}" to "${attributeValue}" on "${tagName}" element` }
+        i+= quoteType == "'" || quoteType == '"';
       }
       let j = i + selfclosing;
       if (!selfclosing) {
