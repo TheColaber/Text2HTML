@@ -27,6 +27,8 @@ document.querySelector(".main").insertHTML(`
 ## Supports
 This function supports the following:
 - Elements
+  - Scripts
+  - Styles
   - Self-closing
   - Attributes
     - Single quotes
@@ -37,6 +39,4 @@ This function supports the following:
 
 ## Non-Support
 This function does not yet supports the following:
-- Elements
-  - Script with no source
-  - Style
+null
