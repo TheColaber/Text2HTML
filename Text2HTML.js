@@ -56,16 +56,15 @@ Element.prototype.insertHTML = function (text) {
       } else analyzeElement(element.parentElement, modtext.substring(j, modtext.length));
     }
     else {
-      let j = i;
       let innerText = "";
-      for (; !(modtext.charCodeAt(j) == 10 || j == modtext.length); j++) {
-        if (modtext.charAt(j) == "<" && modtext.substring(j, modtext.length).match(/<.*>/g).length) break;
+      for (j = i; j != modtext.length; j++) {
+        if (modtext.substring(j, modtext.length).match(/<.*>/g)) if (modtext.indexOf(modtext.substring(j, modtext.length).match(/<.*>/g)[0]) == j) break;
         innerText += modtext.charAt(j);
       }
       if (placement.childNodes.length) {
         let textnode = document.createTextNode(innerText);
         placement.append(textnode);
-      } else placement.innerText = innerText;
+      } else placement.textContent = innerText;
       analyzeElement(placement, modtext.substring(j, modtext.length));
     }
   }
