@@ -34,6 +34,7 @@ This function supports the following:
     - Single quotes
     - Double quotes
     - No quotes
+    - No value attributes
 - Comments
 - Text Nodes
 
