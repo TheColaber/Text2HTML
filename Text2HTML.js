@@ -30,8 +30,8 @@ Element.prototype.insertHTML = function (text) {
           break;
         }
         let attributeName = "";
-        for (; modtext.charAt(i) != "="; i++) attributeName += modtext.charAt(i);
-        i++;
+        for (; !(modtext.charAt(i) == "=" || modtext.charAt(i) == ">"); i++) attributeName += modtext.charAt(i);
+        i+= modtext.charAt(i) != ">"
         let quoteType = modtext.charAt(i) == "'" || modtext.charAt(i) == '"' ? modtext.charAt(i) : false;
         i+= quoteType == "'" || quoteType == '"';
         let attributeValue = "";
