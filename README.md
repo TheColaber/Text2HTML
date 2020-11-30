@@ -14,15 +14,49 @@ Element.insertHTML(text String)
 
 ```js
 document.querySelector(".main").insertHTML(`
-<div class='nav'>
-<!-- Welcome to Google! -->
-  <a href=https://google.com>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
-  </a>
-    Welcome!
-    <br>
-    Google!
-</div>
+  <div class='nav'>
+  <!-- Welcome to Google! -->
+    <a href=https://google.com>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
+    </a>
+      Welcome!
+      <br>
+      Google!
+  </div>
+  
+  <style>
+    body{
+      margin: 0;
+      color: white;
+      font-size: 60px;
+      letter-spacing: 2px;
+      line-height: 60px;
+      font-family: system-ui;
+    }
+
+    .nav{
+      width: 100%;
+      height: 300px;
+      background-color: #2b2b2b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    a img{
+      height: 150px;
+    }
+  </style>
+
+  <script>
+    let a = document.querySelector("a");
+    a.addEventListener("click", function (e) {
+      if (!confirm("Are you sure you would like to visit google?")) {
+        e.cancelBubble = true;
+        e.preventDefault();
+      }
+    });
+  </script>
 `);
 ```
 
