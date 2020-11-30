@@ -28,6 +28,8 @@ Element.prototype.insertHTML = function (text) {
         if (modtext.substring(i, i+2) == "/>") {
           selfclosing++;
           break;
+        } else if (modtext.charAt(i) == ">") {
+          break;
         }
         let attributeName = "";
         for (; !(modtext.charAt(i) == "=" || modtext.charAt(i) == ">"); i++) attributeName += modtext.charAt(i);
@@ -57,15 +59,13 @@ Element.prototype.insertHTML = function (text) {
     }
     else {
       let innerText = "";
-      for (j = i; j != modtext.length; j++) {
-        if (modtext.substring(j, modtext.length).match(/<.*>/g)) if (modtext.indexOf(modtext.substring(j, modtext.length).match(/<.*>/g)[0]) == j) break;
-        innerText += modtext.charAt(j);
-      }
+      if (modtext.substring(i, modtext.length).match(/<.*>/g)) innerText = modtext.substring(i, modtext.indexOf(modtext.substring(i, modtext.length).match(/<.*>/g)[0]))
+      else innerText = modtext.substring(i, modtext.length)
       if (placement.childNodes.length) {
         let textnode = document.createTextNode(innerText);
         placement.append(textnode);
       } else placement.textContent = innerText;
-      analyzeElement(placement, modtext.substring(j, modtext.length));
+      if (modtext.substring(i, modtext.length).match(/<.*>/g)) analyzeElement(placement, modtext.substring(modtext.indexOf(modtext.substring(i, modtext.length).match(/<.*>/g)[0]), modtext.length));
     }
   }
   analyzeElement(this, text);
