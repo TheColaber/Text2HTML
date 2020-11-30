@@ -5,11 +5,13 @@
 Takes text and inserts it to the page as html. Useful when not wanting to use DOM Parsers, insertAdjentHTML, and innerHTML.
 
 #### Syntax:
+
 ```js
 Element.insertHTML(text String)
 ```
 
 #### Example:
+
 ```js
 document.querySelector(".main").insertHTML(`
 <div class='nav'>
@@ -21,11 +23,13 @@ document.querySelector(".main").insertHTML(`
     <br>
     Google!
 </div>
-`)
+`);
 ```
 
 ## Supports
+
 This function supports the following:
+
 - Elements
   - Scripts
   - Styles
@@ -39,5 +43,6 @@ This function supports the following:
 - Text Nodes
 
 ## Non-Support
+
 This function does not yet supports the following:
 null

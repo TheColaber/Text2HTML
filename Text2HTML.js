@@ -4,10 +4,10 @@ Element.prototype.insertHTML = function (text) {
     while (modtext.charCodeAt(i) == 32 || modtext.charCodeAt(i) == 10) i++;
     if (i == modtext.length) return;
     if (modtext.charAt(i) == "<") {
-      if (modtext.substring(i, i+4) == "<!--") {
+      if (modtext.substring(i, i + 4) == "<!--") {
         i += 4;
         let commentMessage = "";
-        while (modtext.substring(i, i+3) != "-->") {
+        while (modtext.substring(i, i + 3) != "-->") {
           commentMessage += modtext.charAt(i);
           i++;
         }
@@ -19,55 +19,105 @@ Element.prototype.insertHTML = function (text) {
       let selfclosing = 0;
       let tagName = "";
       i++;
-      for (; !(modtext.charAt(i) == ">" || modtext.charAt(i) == " " || modtext.substring(i, i+2) == "/>"); i++) tagName += modtext.charAt(i);
-      try { var element = placement.appendChild(document.createElement(tagName)) }
-      catch { throw `Error in creating element "${tagName}"` }
-      selfclosing+= !element.outerHTML.includes("</");
+      for (
+        ;
+        !(
+          modtext.charAt(i) == ">" ||
+          modtext.charAt(i) == " " ||
+          modtext.substring(i, i + 2) == "/>"
+        );
+        i++
+      )
+        tagName += modtext.charAt(i);
+      try {
+        var element = placement.appendChild(document.createElement(tagName));
+      } catch {
+        throw `Error in creating element "${tagName}"`;
+      }
+      selfclosing += !element.outerHTML.includes("</");
       while (modtext.charAt(i) != ">") {
         while (modtext.charAt(i) == " ") i++;
-        if (modtext.substring(i, i+2) == "/>") {
+        if (modtext.substring(i, i + 2) == "/>") {
           selfclosing++;
           break;
         } else if (modtext.charAt(i) == ">") {
           break;
         }
         let attributeName = "";
-        for (; !(modtext.charAt(i) == "=" || modtext.charAt(i) == ">"); i++) attributeName += modtext.charAt(i);
-        i+= modtext.charAt(i) != ">"
-        let quoteType = modtext.charAt(i) == "'" || modtext.charAt(i) == '"' ? modtext.charAt(i) : false;
-        i+= quoteType == "'" || quoteType == '"';
+        for (; !(modtext.charAt(i) == "=" || modtext.charAt(i) == ">"); i++)
+          attributeName += modtext.charAt(i);
+        i += modtext.charAt(i) != ">";
+        let quoteType =
+          modtext.charAt(i) == "'" || modtext.charAt(i) == '"'
+            ? modtext.charAt(i)
+            : false;
+        i += quoteType == "'" || quoteType == '"';
         let attributeValue = "";
-        for (; quoteType == "'" || quoteType == '"' ? modtext.charAt(i) != quoteType : !(modtext.charAt(i) == " " || modtext.charAt(i) == ">"); i++) attributeValue += modtext.charAt(i);
-        try { element.setAttribute(attributeName, attributeValue) }
-        catch (e) { throw `Error: Failed to set the attribute "${attributeName}" to "${attributeValue}" on "${tagName}" element` }
-        i+= quoteType == "'" || quoteType == '"';
+        for (
+          ;
+          quoteType == "'" || quoteType == '"'
+            ? modtext.charAt(i) != quoteType
+            : !(modtext.charAt(i) == " " || modtext.charAt(i) == ">");
+          i++
+        )
+          attributeValue += modtext.charAt(i);
+        try {
+          element.setAttribute(attributeName, attributeValue);
+        } catch (e) {
+          throw `Error: Failed to set the attribute "${attributeName}" to "${attributeValue}" on "${tagName}" element`;
+        }
+        i += quoteType == "'" || quoteType == '"';
       }
       let j = i + selfclosing;
       if (!selfclosing) {
-        j = i
+        j = i;
         let duplicates = 0;
         for (; j < modtext.length; j++) {
-          if (modtext.substring(j, j + `<${tagName}`.length) == `<${tagName}`) duplicates++;
-          if (modtext.substring(j, j + `</${tagName}>`.length) == `</${tagName}>`) {
+          if (modtext.substring(j, j + `<${tagName}`.length) == `<${tagName}`)
+            duplicates++;
+          if (
+            modtext.substring(j, j + `</${tagName}>`.length) == `</${tagName}>`
+          ) {
             duplicates--;
             if (duplicates == -1) break;
           }
         }
-        analyzeElement(element, modtext.substring(i+1, j));
-        analyzeElement(element.parentElement, modtext.substring(j + `</${tagName}>`.length, modtext.length));
-      } else analyzeElement(element.parentElement, modtext.substring(j, modtext.length));
-    }
-    else {
+        analyzeElement(element, modtext.substring(i + 1, j));
+        analyzeElement(
+          element.parentElement,
+          modtext.substring(j + `</${tagName}>`.length, modtext.length)
+        );
+      } else
+        analyzeElement(
+          element.parentElement,
+          modtext.substring(j, modtext.length)
+        );
+    } else {
       let innerText = "";
-      if (modtext.substring(i, modtext.length).match(/<.*>/g)) innerText = modtext.substring(i, modtext.indexOf(modtext.substring(i, modtext.length).match(/<.*>/g)[0]))
-      else innerText = modtext.substring(i, modtext.length)
+      if (modtext.substring(i, modtext.length).match(/<.*>/g))
+        innerText = modtext.substring(
+          i,
+          modtext.indexOf(
+            modtext.substring(i, modtext.length).match(/<.*>/g)[0]
+          )
+        );
+      else innerText = modtext.substring(i, modtext.length);
       if (placement.childNodes.length) {
         let textnode = document.createTextNode(innerText);
         placement.append(textnode);
       } else placement.textContent = innerText;
-      if (modtext.substring(i, modtext.length).match(/<.*>/g)) analyzeElement(placement, modtext.substring(modtext.indexOf(modtext.substring(i, modtext.length).match(/<.*>/g)[0]), modtext.length));
+      if (modtext.substring(i, modtext.length).match(/<.*>/g))
+        analyzeElement(
+          placement,
+          modtext.substring(
+            modtext.indexOf(
+              modtext.substring(i, modtext.length).match(/<.*>/g)[0]
+            ),
+            modtext.length
+          )
+        );
     }
   }
   analyzeElement(this, text);
   return this;
-}
+};
