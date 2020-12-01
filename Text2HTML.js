@@ -8,7 +8,8 @@ Element.prototype.insertHTML = async function (position, text) {
     if (modtext.charAt(i) == "<") {
       if (modtext.substring(i, i + 4) == "<!--") {
         let commentMessage = "";
-        for (i += 4; modtext.substring(i, i + 3) != "-->"; i++) commentMessage += modtext.charAt(i);
+        for (i += 4; modtext.substring(i, i + 3) != "-->"; i++)
+          commentMessage += modtext.charAt(i);
         let comment = document.createComment(commentMessage);
         if (placement == thisPlacement) elements.unshift(comment);
         else placement.appendChild(comment);
@@ -27,7 +28,7 @@ Element.prototype.insertHTML = async function (position, text) {
         i++
       )
         tagName += modtext.charAt(i);
-        let element = document.createElement(tagName);
+      let element = document.createElement(tagName);
       try {
         if (placement == thisPlacement) elements.unshift(element);
         else placement.appendChild(element);
@@ -122,12 +123,19 @@ Element.prototype.insertHTML = async function (position, text) {
   await analyzeElement(this, text);
   console.log(elements);
   elements.forEach((element, i) => {
-    if (position == "beforeend") this.appendChild(elements[Math.abs(i-elements.length+1)]);
+    if (position == "beforeend")
+      this.appendChild(elements[Math.abs(i - elements.length + 1)]);
     else if (position == "afterend") {
-      if (this.nextSibling) this.parentElement.insertBefore(element, this.nextSibling);
+      if (this.nextSibling)
+        this.parentElement.insertBefore(element, this.nextSibling);
       else this.parentElement.appendChild(element);
-    } else if (position == "beforebegin") this.parentElement.insertBefore(elements[Math.abs(i-elements.length+1)], this);
-    else if (position == "afterbegin") this.insertBefore(element, this.firstChild);
+    } else if (position == "beforebegin")
+      this.parentElement.insertBefore(
+        elements[Math.abs(i - elements.length + 1)],
+        this
+      );
+    else if (position == "afterbegin")
+      this.insertBefore(element, this.firstChild);
   });
   return elements;
 };
