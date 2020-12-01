@@ -1,4 +1,4 @@
-# Text2HTML - WIP - PLEASE REPORT BUGS
+# Text2HTML - PLEASE REPORT BUGS
 
 ## Info
 
@@ -7,13 +7,14 @@ Takes text and inserts it to the page as html. Useful when not wanting to use DO
 #### Syntax:
 
 ```js
-Element.insertHTML(text String)
+Element.insertHTML(String position, String text)
 ```
+This syntax is the same syntax as [insertAdjentHTML](https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML)
 
 #### Example:
 
 ```js
-document.querySelector(".main").insertHTML(`
+document.querySelector(".main").insertHTML("beforebegin", `
   <div class='nav'>
   <!-- Welcome to Google! -->
     <a href=https://google.com>
@@ -79,4 +80,5 @@ This function supports the following:
 ## Non-Support
 
 This function does not yet supports the following:
+
 null
