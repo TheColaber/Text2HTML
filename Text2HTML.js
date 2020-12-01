@@ -1,26 +1,24 @@
-Element.prototype.insertHTML = function (text) {
+Element.prototype.insertHTML = async function (position, text) {
+  let elements = [];
+  let thisPlacement = this;
   function analyzeElement(placement, modtext) {
     let i = 0;
     while (modtext.charCodeAt(i) == 32 || modtext.charCodeAt(i) == 10) i++;
     if (i == modtext.length) return;
     if (modtext.charAt(i) == "<") {
       if (modtext.substring(i, i + 4) == "<!--") {
-        i += 4;
         let commentMessage = "";
-        while (modtext.substring(i, i + 3) != "-->") {
-          commentMessage += modtext.charAt(i);
-          i++;
-        }
-        var comment = document.createComment(commentMessage);
-        placement.appendChild(comment);
+        for (i += 4; modtext.substring(i, i + 3) != "-->"; i++) commentMessage += modtext.charAt(i);
+        let comment = document.createComment(commentMessage);
+        if (placement == thisPlacement) elements.unshift(comment);
+        else placement.appendChild(comment);
         analyzeElement(placement, modtext.substring(i + 3, modtext.length));
         return;
       }
       let selfclosing = 0;
       let tagName = "";
-      i++;
       for (
-        ;
+        i++;
         !(
           modtext.charAt(i) == ">" ||
           modtext.charAt(i) == " " ||
@@ -29,8 +27,10 @@ Element.prototype.insertHTML = function (text) {
         i++
       )
         tagName += modtext.charAt(i);
+        let element = document.createElement(tagName);
       try {
-        var element = placement.appendChild(document.createElement(tagName));
+        if (placement == thisPlacement) elements.unshift(element);
+        else placement.appendChild(element);
       } catch {
         throw `Error in creating element "${tagName}"`;
       }
@@ -84,7 +84,7 @@ Element.prototype.insertHTML = function (text) {
         }
         analyzeElement(element, modtext.substring(i + 1, j));
         analyzeElement(
-          element.parentElement,
+          element.parentElement || thisPlacement,
           modtext.substring(j + `</${tagName}>`.length, modtext.length)
         );
       } else
@@ -104,7 +104,8 @@ Element.prototype.insertHTML = function (text) {
       else innerText = modtext.substring(i, modtext.length);
       if (placement.childNodes.length) {
         let textnode = document.createTextNode(innerText);
-        placement.append(textnode);
+        if (placement == thisPlacement) elements.unshift(textnode);
+        else placement.appendChild(textnode);
       } else placement.textContent = innerText;
       if (modtext.substring(i, modtext.length).match(/<.*>/g))
         analyzeElement(
@@ -118,6 +119,15 @@ Element.prototype.insertHTML = function (text) {
         );
     }
   }
-  analyzeElement(this, text);
-  return this;
+  await analyzeElement(this, text);
+  console.log(elements);
+  elements.forEach((element, i) => {
+    if (position == "beforeend") this.appendChild(elements[Math.abs(i-elements.length+1)]);
+    else if (position == "afterend") {
+      if (this.nextSibling) this.parentElement.insertBefore(element, this.nextSibling);
+      else this.parentElement.appendChild(element);
+    } else if (position == "beforebegin") this.parentElement.insertBefore(elements[Math.abs(i-elements.length+1)], this);
+    else if (position == "afterbegin") this.insertBefore(element, this.firstChild);
+  });
+  return elements;
 };
