@@ -9,12 +9,15 @@ Takes text and inserts it to the page as html. Useful when not wanting to use DO
 ```js
 Element.insertHTML(String position, String text)
 ```
+
 This syntax is the same syntax as [insertAdjentHTML](https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML)
 
 #### Example:
 
 ```js
-document.querySelector(".main").insertHTML("beforebegin", `
+document.querySelector(".main").insertHTML(
+  "beforebegin",
+  `
   <div class='nav'>
   <!-- Welcome to Google! -->
     <a href=https://google.com>
@@ -58,7 +61,8 @@ document.querySelector(".main").insertHTML("beforebegin", `
       }
     });
   </script>
-`);
+`
+);
 ```
 
 ## Supports
