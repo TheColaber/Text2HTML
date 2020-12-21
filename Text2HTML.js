@@ -1,4 +1,4 @@
-Element.prototype.insertHTML = async function (position, text) {
+Element.prototype.insertHTML = function (position, text) {
   let elements = [];
   let thisPlacement = this;
   function analyzeElement(placement, modtext) {
@@ -120,8 +120,7 @@ Element.prototype.insertHTML = async function (position, text) {
         );
     }
   }
-  await analyzeElement(this, text);
-  console.log(elements);
+  analyzeElement(this, text);
   elements.forEach((element, i) => {
     if (position == "beforeend")
       this.appendChild(elements[Math.abs(i - elements.length + 1)]);
@@ -137,5 +136,5 @@ Element.prototype.insertHTML = async function (position, text) {
     else if (position == "afterbegin")
       this.insertBefore(element, this.firstChild);
   });
-  return elements;
+  return elements[1] ? elements : elements[0];
 };
