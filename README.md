@@ -10,16 +10,17 @@ Takes text and inserts it to the page as html. Useful when not wanting to use DO
 parseHTML(String text, Object options {| Boolean asList, String baseUrls |} )
 ```
 
- - text - text to parse
- - options
-  - asList - return data as a list of Nodes. defaults to false.
-  - baseUrls - change the base urls in src and href attributes. defaults to "".
+- text - text to parse
+- options
+- asList - return data as a list of Nodes. defaults to false.
+- baseUrls - change the base urls in src and href attributes. defaults to "".
 
 #### Example:
 
 ```js
 document.querySelector(".main").append(
-  ...parseHTML(`
+  ...parseHTML(
+    `
   <div class='nav'>
   <!-- Welcome to Google! -->
     <a href=https://google.com>
@@ -63,7 +64,9 @@ document.querySelector(".main").append(
       }
     });
   </script>
-`, { asList: true })
+`,
+    { asList: true }
+  )
 );
 ```
 
