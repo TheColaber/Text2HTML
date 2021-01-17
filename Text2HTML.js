@@ -1,9 +1,14 @@
 const parseHTML = (text, { asList = false, baseUrls = "" } = {}) => {
   let elements = [];
-  if (typeof text == "undefined") throw `Error the text to parce must be specified.`
+  if (typeof text == "undefined")
+    throw `Error the text to parce must be specified.`;
   let thisPlacement = this;
   function analyzeElement(placement, modtext) {
-    for (var i = 0; modtext.charCodeAt(i) == 32 || modtext.charCodeAt(i) == 10; i++);
+    for (
+      var i = 0;
+      modtext.charCodeAt(i) == 32 || modtext.charCodeAt(i) == 10;
+      i++
+    );
     if (i == modtext.length) return;
     if (modtext.charAt(i) == "<") {
       if (modtext.substring(i, i + 4) == "<!--") {
@@ -62,7 +67,11 @@ const parseHTML = (text, { asList = false, baseUrls = "" } = {}) => {
           i++
         )
           attributeValue += modtext.charAt(i);
-        if (["href", "src"].includes(attributeName) && attributeValue.startsWith("/")) attributeValue = baseUrls + attributeValue;
+        if (
+          ["href", "src"].includes(attributeName) &&
+          attributeValue.startsWith("/")
+        )
+          attributeValue = baseUrls + attributeValue;
         try {
           element.setAttribute(attributeName, attributeValue);
         } catch (e) {
@@ -104,7 +113,9 @@ const parseHTML = (text, { asList = false, baseUrls = "" } = {}) => {
           )
         );
       else innerText = modtext.substring(i, modtext.length);
-      innerText = innerText.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+      innerText = innerText.replace(/&#(\d+);/g, (match, dec) =>
+        String.fromCharCode(dec)
+      );
       if (placement.childNodes.length) {
         let textnode = document.createTextNode(innerText);
         if (placement == thisPlacement) elements.unshift(textnode);
