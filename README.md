@@ -12,8 +12,8 @@ parseHTML(String text, Object options {| Boolean asList, String baseUrls |} )
 
 - text - text to parse
 - options
-- asList - return data as a list of Nodes. defaults to false.
-- baseUrls - change the base urls in src and href attributes. defaults to "".
+  - asList - return data as a list of Nodes. defaults to false.
+  - baseUrls - change the base urls in src and href attributes. defaults to "".
 
 #### Example:
 
