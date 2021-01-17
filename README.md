@@ -7,17 +7,19 @@ Takes text and inserts it to the page as html. Useful when not wanting to use DO
 #### Syntax:
 
 ```js
-Element.insertHTML(String position, String text)
+parseHTML(String text, Object options {| Boolean asList, String baseUrls |} )
 ```
 
-This syntax is the same syntax as [insertAdjentHTML](https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML)
+ - text - text to parse
+ - options
+  - asList - return data as a list of Nodes. defaults to false.
+  - baseUrls - change the base urls in src and href attributes. defaults to "".
 
 #### Example:
 
 ```js
-document.querySelector(".main").insertHTML(
-  "beforebegin",
-  `
+document.querySelector(".main").append(
+  ...parseHTML(`
   <div class='nav'>
   <!-- Welcome to Google! -->
     <a href=https://google.com>
@@ -27,7 +29,7 @@ document.querySelector(".main").insertHTML(
       <br>
       Google!
   </div>
-  
+
   <style>
     body{
       margin: 0;
@@ -61,7 +63,7 @@ document.querySelector(".main").insertHTML(
       }
     });
   </script>
-`
+`, { asList: true })
 );
 ```
 
@@ -80,9 +82,3 @@ This function supports the following:
     - No value attributes
 - Comments
 - Text Nodes
-
-## Non-Support
-
-This function does not yet supports the following:
-
-null
