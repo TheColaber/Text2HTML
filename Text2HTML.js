@@ -1,9 +1,9 @@
-Element.prototype.insertHTML = function (position, text) {
+const parseHTML = (text, { asList = false, baseUrls = "" } = {}) => {
   let elements = [];
+  if (typeof text == "undefined") throw `Error the text to parce must be specified.`
   let thisPlacement = this;
   function analyzeElement(placement, modtext) {
-    let i = 0;
-    while (modtext.charCodeAt(i) == 32 || modtext.charCodeAt(i) == 10) i++;
+    for (var i = 0; modtext.charCodeAt(i) == 32 || modtext.charCodeAt(i) == 10; i++);
     if (i == modtext.length) return;
     if (modtext.charAt(i) == "<") {
       if (modtext.substring(i, i + 4) == "<!--") {
@@ -30,7 +30,7 @@ Element.prototype.insertHTML = function (position, text) {
         tagName += modtext.charAt(i);
       let element = document.createElement(tagName);
       try {
-        if (placement == thisPlacement) elements.unshift(element);
+        if (placement == thisPlacement) elements.push(element);
         else placement.appendChild(element);
       } catch {
         throw `Error in creating element "${tagName}"`;
@@ -62,6 +62,7 @@ Element.prototype.insertHTML = function (position, text) {
           i++
         )
           attributeValue += modtext.charAt(i);
+        if (["href", "src"].includes(attributeName) && attributeValue.startsWith("/")) attributeValue = baseUrls + attributeValue;
         try {
           element.setAttribute(attributeName, attributeValue);
         } catch (e) {
@@ -103,6 +104,7 @@ Element.prototype.insertHTML = function (position, text) {
           )
         );
       else innerText = modtext.substring(i, modtext.length);
+      innerText = innerText.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
       if (placement.childNodes.length) {
         let textnode = document.createTextNode(innerText);
         if (placement == thisPlacement) elements.unshift(textnode);
@@ -121,20 +123,8 @@ Element.prototype.insertHTML = function (position, text) {
     }
   }
   analyzeElement(this, text);
-  elements.forEach((element, i) => {
-    if (position == "beforeend")
-      this.appendChild(elements[Math.abs(i - elements.length + 1)]);
-    else if (position == "afterend") {
-      if (this.nextSibling)
-        this.parentElement.insertBefore(element, this.nextSibling);
-      else this.parentElement.appendChild(element);
-    } else if (position == "beforebegin")
-      this.parentElement.insertBefore(
-        elements[Math.abs(i - elements.length + 1)],
-        this
-      );
-    else if (position == "afterbegin")
-      this.insertBefore(element, this.firstChild);
-  });
-  return elements[1] ? elements : elements[0];
+  if (asList) return elements[1] ? elements : elements[0];
+  let body = document.createElement("body");
+  body.append(...elements);
+  return body;
 };
