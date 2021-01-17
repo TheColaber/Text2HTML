@@ -2,7 +2,7 @@
 
 ## Info
 
-Takes text and inserts it to the page as html. Useful when not wanting to use DOM Parsers, insertAdjentHTML, and innerHTML.
+Takes text and parces it with your desired options. Useful when not wanting to use DOM Parsers, insertAdjentHTML, and innerHTML.
 
 #### Syntax:
 
