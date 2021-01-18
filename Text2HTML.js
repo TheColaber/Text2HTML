@@ -1,4 +1,4 @@
-const parseHTML = (text, { asList = false, baseUrls = "" } = {}) => {
+window.parseHTML = (text, { asList = false, baseUrls = "" } = {}) => {
   let elements = [];
   if (typeof text == "undefined")
     throw `Error the text to parce must be specified.`;
